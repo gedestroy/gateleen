@@ -45,7 +45,8 @@ jobs:
           java -jar gateleen-playground/target/playground.jar &> playground_logs.log &
           sleep 5s
           mvn install -PuiIntegrationTests
-        DISPLAY: 99.0
+        env:
+          DISPLAY: 99.0
 
       - name: Release to maven central
         if: github.ref_name == 'master' && github.event_name != 'pull_request' && github.repository == 'swisspush/gateleen'
