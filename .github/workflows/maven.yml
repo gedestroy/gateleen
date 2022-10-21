@@ -37,13 +37,10 @@ jobs:
       - name: Non UI integration tests
         run: mvn install -PnonUiIntegrationTests
 
-      - name: Deploy uploadStaticFiles
-        run: mvn deploy -PuploadStaticFiles
-
       - name: UI integration tests
-        run: |
           java -jar gateleen-playground/target/playground.jar &> playground_logs.log &
           sleep 5s
+          mvn deploy -PuploadStaticFiles
           mvn install -PuiIntegrationTests
         env:
           DISPLAY: 99.0
