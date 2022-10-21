@@ -52,6 +52,9 @@ jobs:
           java -jar gateleen-playground/target/playground.jar &> playground_logs.log &
           sleep 5s
           
+          wget https://chromedriver.storage.googleapis.com/2.21/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip -d gateleen-test/src/test/resources/
+      
           mvn deploy -PuploadStaticFiles
           mvn install -PuiIntegrationTests
 
