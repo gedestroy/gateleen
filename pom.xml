@@ -50,6 +50,8 @@
         <maven.compiler.target>11</maven.compiler.target>
         <targetHost>localhost</targetHost>
         <targetPort>8989</targetPort>
+        <sel_chrome_driver>${session.executionRootDirectory}/gateleen-test/src/test/resources/chromedriver
+        </sel_chrome_driver>
         <vertx.version>4.2.1</vertx.version>
         <vertx-redis-client.version>4.3.3</vertx-redis-client.version>
         <jackson.version>2.13.0</jackson.version>
