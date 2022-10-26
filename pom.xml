@@ -580,8 +580,8 @@
                 <version>1.0-m5.1</version>
                 <configuration>
                     <flowInitContext>
-                        <masterBranchName>master</masterBranchName>
-                        <developBranchName>develop</developBranchName>
+                        <masterBranchName>fork_master</masterBranchName>
+                        <developBranchName>fork_develop</developBranchName>
                         <featureBranchPrefix>feature-</featureBranchPrefix>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
