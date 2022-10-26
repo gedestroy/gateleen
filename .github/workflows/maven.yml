@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   push:
   pull_request:
-    branches: [ "master", "develop" ]
+    branches: [ "fork_master", "fork_develop" ]
 
 jobs:
   build_maven:
@@ -31,11 +31,34 @@ jobs:
         with:
           redis-version: 4
 
-      - name: Install, unit test, integration test
+      - name: Install, unit test
         run: mvn install -Dmaven.javadoc.skip=true -PpublicRepos -B -V
 
+      - name: Non UI integration tests
+        run: mvn install -PnonUiIntegrationTests
+
+#      skip UI integration tests.
+#      - name: UI integration tests
+#        run: |
+#          sh -e /etc/init.d/xvfb start
+#
+#          sudo apt-get install -y libappindicator1 fonts-liberation
+#          wget http://www.slimjet.com/chrome/download-chrome.php?file=lnx%2Fchrome64_48.0.2564.109.deb
+#          sudo dpkg -i download-chrome.php?file=lnx%2Fchrome64_48.0.2564.109.deb
+#
+#          wget https://chromedriver.storage.googleapis.com/2.21/chromedriver_linux64.zip
+#          unzip chromedriver_linux64.zip -d gateleen-test/src/test/resources/
+#
+#          java -jar gateleen-playground/target/playground.jar &> playground_logs.log &
+#          sleep 5s
+#
+#          mvn deploy -PuploadStaticFiles
+#          mvn install -PuiIntegrationTests
+#        env:
+#          DISPLAY: 99
+
       - name: Release to maven central
-        if: github.ref_name == 'master' && github.event_name != 'pull_request' && github.repository == 'swisspush/gateleen'
+        if: github.ref_name == 'fork_master' && github.event_name != 'pull_request' && github.repository == 'gedestroy/gateleen'
         run: |
           curl -s get.sdkman.io | bash
           source "$HOME/.sdkman/bin/sdkman-init.sh"
@@ -47,7 +70,6 @@ jobs:
           CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
           CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
           CI_GPG_PASSPHRASE: ${{ secrets.CI_GPG_PASSPHRASE }}
-          DISPLAY: 99.0
 
       - name: After release
         run: bash <(curl -s https://codecov.io/bash)
