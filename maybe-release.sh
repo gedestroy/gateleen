@@ -26,8 +26,8 @@ then
     echo 'Release done, will push'
     git tag
     git push --tags
-    git checkout develop
-    git push origin develop
+    git checkout fork_develop
+    git push origin fork_develop
   exit 0
 fi
 echo 'Release failed'
