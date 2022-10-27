@@ -37,25 +37,23 @@ jobs:
       - name: Non UI integration tests
         run: mvn install -PnonUiIntegrationTests
 
-#      skip UI integration tests.
-#      - name: UI integration tests
-#        run: |
-#          sh -e /etc/init.d/xvfb start
-#
-#          sudo apt-get install -y libappindicator1 fonts-liberation
-#          wget http://www.slimjet.com/chrome/download-chrome.php?file=lnx%2Fchrome64_48.0.2564.109.deb
-#          sudo dpkg -i download-chrome.php?file=lnx%2Fchrome64_48.0.2564.109.deb
-#
-#          wget https://chromedriver.storage.googleapis.com/2.21/chromedriver_linux64.zip
-#          unzip chromedriver_linux64.zip -d gateleen-test/src/test/resources/
-#
-#          java -jar gateleen-playground/target/playground.jar &> playground_logs.log &
-#          sleep 5s
-#
-#          mvn deploy -PuploadStaticFiles
-#          mvn install -PuiIntegrationTests
-#        env:
-#          DISPLAY: 99
+      - name: Install chromedriver
+        uses: nanasess/setup-chromedriver@v1.1.0
+        with:
+          chromedriver-version: '2.21'
+
+      - name: UI integration tests
+        run: |
+          chromedriver --url-base=/wd/hub &
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
+
+          java -jar gateleen-playground/target/playground.jar &> playground_logs.log &
+          sleep 5s
+  
+          mvn deploy -PuploadStaticFiles
+          mvn install -PuiIntegrationTests
+        env:
+          DISPLAY: 99
 
       - name: Release to maven central
         if: github.ref_name == 'fork_master' && github.event_name != 'pull_request' && github.repository == 'gedestroy/gateleen'
