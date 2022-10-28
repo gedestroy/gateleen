@@ -34,7 +34,7 @@ jobs:
       - name: Install chrome browser
         uses: browser-actions/setup-chrome@v0.0.0
         with:
-          chromium-version: '359696'
+          chromium-version: '359699'
 
       - name: check chrome version
         run: chrome --version
