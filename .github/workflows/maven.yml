@@ -55,6 +55,7 @@ jobs:
 
       - name: UI integration tests
         run: |
+          export DISPLAY=:99
           chromedriver --url-base=/wd/hub &
           sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
 
@@ -63,8 +64,6 @@ jobs:
   
           mvn deploy -PuploadStaticFiles
           mvn install -PuiIntegrationTests
-        env:
-          DISPLAY: 99
 
       - name: Release to maven central
         if: github.ref_name == 'fork_master' && github.event_name != 'pull_request' && github.repository == 'gedestroy/gateleen'
