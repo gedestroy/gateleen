@@ -32,7 +32,7 @@ jobs:
           redis-version: 4
 
       - name: Install libgtk2.0-0:i386 to support old version chrome
-        run: sudo apt install libgtk2.0-0:i386
+        run: sudo apt-get install libgtk2.0-0:i386
 
       - name: Install chrome browser
         uses: browser-actions/setup-chrome@v0.0.0
