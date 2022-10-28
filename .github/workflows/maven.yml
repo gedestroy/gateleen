@@ -31,21 +31,18 @@ jobs:
         with:
           redis-version: 4
 
-      - name: Install libgtk2.0-0 to support old version chrome
-        run: sudo apt-get install libgtk2.0-0
-
-      - name: Install chrome browser
-        uses: browser-actions/setup-chrome@v0.0.0
-        with:
-          chromium-version: '359699'
+#      - name: Install libgtk2.0-0 to support old version chrome
+#        run: sudo apt-get install libgtk2.0-0
+#
+#      - name: Install chrome browser
+#        uses: browser-actions/setup-chrome@v0.0.0
+#        with:
+#          chromium-version: '359699'
 
       - name: Install chromedriver
         uses: nanasess/setup-chromedriver@v1.1.0
         with:
           chromedriver-version: '2.21'
-
-      - name: check chrome version
-        run: /usr/local/bin/chromedriver --version
 
       - name: Install, unit test
         run: mvn install -Dmaven.javadoc.skip=true -PpublicRepos -B -V
