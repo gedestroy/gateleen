@@ -41,7 +41,7 @@ public class HookJsSteps {
     public void chromeHasBeenStarted() throws Throwable {
         System.setProperty("webdriver.chrome.driver", System.getProperty("sel_chrome_driver"));
         ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--no-sandbox");
+        chromeOptions.addArguments("--headless", "window-size=1024,768", "--no-sandbox");
         webDriver = new ChromeDriver(chromeOptions);
     }
 
