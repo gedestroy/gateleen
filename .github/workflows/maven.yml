@@ -32,9 +32,10 @@ jobs:
           redis-version: 4
 
       - name: Install chrome browser
-        uses: browser-actions/setup-chrome@v0.0.0
+      - uses: abhi1693/setup-browser@v0.3.4
         with:
-          chromium-version: '48.0.2564.109'
+          browser: chrome
+          version: '48.0.2564.109'
 
       - name: check chrome version
         run: chrome --version
