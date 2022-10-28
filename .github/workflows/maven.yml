@@ -34,7 +34,10 @@ jobs:
 #      - name: Install libgtk2.0-0 to support old version chrome
 #        run: sudo apt-get install libgtk2.0-0
 #
-#      - name: Install chrome browser
+      - name: Install chrome browser
+        run: |
+          wget http://www.slimjet.com/chrome/download-chrome.php?file=lnx%2Fchrome64_48.0.2564.109.deb
+          sudo dpkg -i download-chrome.php?file=lnx%2Fchrome64_48.0.2564.109.deb
 #        uses: browser-actions/setup-chrome@v0.0.0
 #        with:
 #          chromium-version: '359699'
@@ -52,9 +55,8 @@ jobs:
 
       - name: UI integration tests
         run: |
-          export DISPLAY=:99
-          chromedriver --url-base=/wd/hub &
-          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
+          export DISPLAY=:99.0
+          sh -e /etc/init.d/xvfb start
 
           java -jar gateleen-playground/target/playground.jar &> playground_logs.log &
           sleep 5s
