@@ -36,7 +36,7 @@ jobs:
           sudo apt-get install gconf-service
           sudo apt-get install libgtk2.0-0
           sudo apt-get install libappindicator1
-          sudo apt install libcurl3-gnutls libcurl3-nss
+          sudo apt-get install libcurl3-gnutls libcurl3-nss
 
       - name: Install chrome browser
         run: |
