@@ -31,16 +31,17 @@ jobs:
         with:
           redis-version: 4
 
-#      - name: Install libgtk2.0-0 to support old version chrome
-#        run: sudo apt-get install libgtk2.0-0
-#
+      - name: Install lib to support old version chrome
+        run: |
+          sudo apt-get install gconf-service
+          sudo apt-get install libgtk2.0-0
+          sudo apt-get install libappindicator1
+          sudo apt-get install libcurl3
+
       - name: Install chrome browser
         run: |
           wget http://www.slimjet.com/chrome/download-chrome.php?file=lnx%2Fchrome64_48.0.2564.109.deb
           sudo dpkg -i download-chrome.php?file=lnx%2Fchrome64_48.0.2564.109.deb
-#        uses: browser-actions/setup-chrome@v0.0.0
-#        with:
-#          chromium-version: '359699'
 
       - name: Install chromedriver
         uses: nanasess/setup-chromedriver@v1.1.0
