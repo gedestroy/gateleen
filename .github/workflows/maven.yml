@@ -53,7 +53,7 @@ jobs:
           mvn install -PuiIntegrationTests
 
       - name: Release to maven central
-        if: github.ref_name == 'master' && github.event_name != 'pull_request' && github.repository == 'swisspush/gateleen'
+        if: github.ref_name == 'master' && github.event_name != 'pull_request' && github.repository == 'swisspost/gateleen'
         run: |
           curl -s get.sdkman.io | bash
           source "$HOME/.sdkman/bin/sdkman-init.sh"
