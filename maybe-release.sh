@@ -32,3 +32,4 @@ then
 fi
 echo 'Release failed'
 exit $rc
+
