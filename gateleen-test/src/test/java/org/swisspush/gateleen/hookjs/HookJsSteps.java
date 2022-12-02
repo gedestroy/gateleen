@@ -59,7 +59,7 @@ public class HookJsSteps {
 
     @Then("^we see the message \"([^\"]*)\" at position (\\d+)$")
     public void weSeeTheMessageAtPosition(String message, int indexOfMessage) throws Throwable {
-        given().await().atMost(Duration.TEN_SECONDS).until(() ->
+        given().await().atMost(Duration.ONE_MINUTE).until(() ->
                         webDriver.findElement(By.xpath("//*[@id=\"hookjs messages\"]/li[" + indexOfMessage + "]")).getText(),
                 equalTo(message));
 
