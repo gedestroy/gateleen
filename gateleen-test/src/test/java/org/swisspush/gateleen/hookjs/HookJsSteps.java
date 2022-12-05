@@ -21,6 +21,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import static com.jayway.awaitility.Awaitility.given;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -39,7 +40,9 @@ public class HookJsSteps {
     @Given("^Chrome has been started$")
     public void chromeHasBeenStarted() throws Throwable {
         System.setProperty("webdriver.chrome.driver", System.getProperty("sel_chrome_driver"));
-        webDriver = new ChromeDriver();
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--headless", "--no-sandbox");
+        webDriver = new ChromeDriver(chromeOptions);
     }
 
     @And("^the hook-js UI is displayed$")
