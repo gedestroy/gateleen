@@ -34,7 +34,6 @@ import org.swisspush.gateleen.queue.expiry.ExpiryCheckHandler;
 import org.swisspush.gateleen.queue.queuing.QueueClient;
 import org.swisspush.gateleen.queue.queuing.QueueProcessor;
 import org.swisspush.gateleen.queue.queuing.RequestQueue;
-import org.swisspush.gateleen.routing.Router;
 import org.swisspush.gateleen.routing.Rule;
 import org.swisspush.gateleen.validation.RegexpValidator;
 import org.swisspush.gateleen.validation.ValidationException;
@@ -107,7 +106,7 @@ public class HookHandler implements LoggableResource {
     private final String hookRootUri;
     private final boolean listableRoutes;
     private final ListenerRepository listenerRepository;
-    final RouteRepository routeRepository;
+    private final RouteRepository routeRepository;
     private final RequestQueue requestQueue;
 
     private final ReducedPropagationManager reducedPropagationManager;
@@ -117,7 +116,6 @@ public class HookHandler implements LoggableResource {
     private final Handler<Void> doneHandler;
 
     private final JsonSchema jsonSchemaHook;
-    private int routeMultiplier;
 
 
     /**
@@ -187,14 +185,6 @@ public class HookHandler implements LoggableResource {
                 requestQueue, listableRoutes, reducedPropagationManager, null, storage);
     }
 
-    public HookHandler(Vertx vertx, HttpClient selfClient, final ResourceStorage storage,
-                       LoggingResourceManager loggingResourceManager, MonitoringHandler monitoringHandler,
-                       String userProfilePath, String hookRootUri, RequestQueue requestQueue, boolean listableRoutes,
-                       ReducedPropagationManager reducedPropagationManager, Handler doneHandler, ResourceStorage hookStorage) {
-        this(vertx, selfClient, storage, loggingResourceManager, monitoringHandler, userProfilePath, hookRootUri,
-                requestQueue, listableRoutes, reducedPropagationManager, doneHandler, hookStorage, Router.DEFAULT_ROUTER_MULTIPLIER);
-    }
-
     /**
      * Creates a new HookHandler.
      *
@@ -210,15 +200,11 @@ public class HookHandler implements LoggableResource {
      * @param reducedPropagationManager reducedPropagationManager
      * @param doneHandler               doneHandler
      * @param hookStorage               hookStorage - where the hooks are stored
-     * @param routeMultiplier           the multiplier that is applied to routes, this is typically the number of nodes in
-     *                                  a cluster multiplied by the number of router instances within a node. Or in other words
-     *                                  the number of {@link Router} instances within a cluster
      */
     public HookHandler(Vertx vertx, HttpClient selfClient, final ResourceStorage userProfileStorage,
                        LoggingResourceManager loggingResourceManager, MonitoringHandler monitoringHandler,
                        String userProfilePath, String hookRootUri, RequestQueue requestQueue, boolean listableRoutes,
-                       ReducedPropagationManager reducedPropagationManager, Handler doneHandler, ResourceStorage hookStorage,
-                       int routeMultiplier) {
+                       ReducedPropagationManager reducedPropagationManager, Handler doneHandler, ResourceStorage hookStorage) {
         log.debug("Creating HookHandler ...");
         this.vertx = vertx;
         this.selfClient = selfClient;
@@ -235,7 +221,6 @@ public class HookHandler implements LoggableResource {
         collectionContentComparator = new CollectionContentComparator();
         this.doneHandler = doneHandler;
         this.hookStorage = hookStorage;
-        this.routeMultiplier = routeMultiplier;
 
         String hookSchema = ResourcesUtils.loadResource("gateleen_hooking_schema_hook", true);
         jsonSchemaHook = JsonSchemaFactory.getInstance().getSchema(hookSchema);
@@ -249,7 +234,6 @@ public class HookHandler implements LoggableResource {
         initMethods.add(this::loadStoredListeners);
         initMethods.add(this::loadStoredRoutes);
         initMethods.add(this::registerCleanupHandler);
-        initMethods.add(this::registerRouteMultiplierChangeHandler);
 
         // ready handler, calls the doneHandler when everything is done and the HookHandler is ready to use
         Handler<Void> readyHandler = new Handler<>() {
@@ -435,24 +419,6 @@ public class HookHandler implements LoggableResource {
         // Receive listener remove notifications
         vertx.eventBus().consumer(REMOVE_ROUTE_ADDRESS, (Handler<Message<String>>) event -> unregisterRoute(event.body()));
 
-        // method done / no async processing pending
-        readyHandler.handle(null);
-    }
-
-    /**
-     * Update all registered router's pool size multiplier
-     *
-     * @param readyHandler - the ready handler
-     */
-    private void registerRouteMultiplierChangeHandler(Handler<Void> readyHandler) {
-        vertx.eventBus().consumer(Router.ROUTE_MULTIPLIER_ADDRESS, (Handler<Message<String>>) event -> {
-            log.info("Updating route multiplier: {}", (event.body() == null ? "<null>" : event.body()));
-            try {
-                routeMultiplier = Integer.parseInt(event.body());
-            } catch (NumberFormatException e) {
-                log.info("failed to parse route multiplier: {}", event.body(), e);
-            }
-        });
         // method done / no async processing pending
         readyHandler.handle(null);
     }
@@ -1532,17 +1498,7 @@ public class HookHandler implements LoggableResource {
         hook.setQueueingStrategy(QueueingStrategyFactory.buildQueueStrategy(storageObject));
 
         // Configure connection pool size
-        Integer originalPoolSize = jsonHook.getInteger(HttpHook.CONNECTION_POOL_SIZE_PROPERTY_NAME);
-        int appliedPoolSize;
-        if (originalPoolSize != null) {
-            appliedPoolSize = Math.floorDiv(originalPoolSize, routeMultiplier);
-            if (appliedPoolSize < 1) {
-                appliedPoolSize = originalPoolSize;
-            }
-            log.debug("Original pool size is {}, applied size is {}", originalPoolSize, appliedPoolSize);
-            hook.setConnectionPoolSize(appliedPoolSize);
-        }
-
+        hook.setConnectionPoolSize(jsonHook.getInteger(HttpHook.CONNECTION_POOL_SIZE_PROPERTY_NAME));
 
         hook.setMaxWaitQueueSize(jsonHook.getInteger(HttpHook.CONNECTION_MAX_WAIT_QUEUE_SIZE_PROPERTY_NAME));
         // Configure request timeout
