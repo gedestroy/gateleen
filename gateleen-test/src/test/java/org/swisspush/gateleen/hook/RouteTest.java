@@ -183,7 +183,7 @@ public class RouteTest extends AbstractTest {
 
         String body2 = "{ \"name\" : \"routePathTest\"}";
         given().body(body2).put(routedResource).then().assertThat().statusCode(200);
-        Awaitility.given().await().atMost(Duration.TWO_SECONDS).until(() -> {
+        Awaitility.given().await().atMost(Duration.TEN_SECONDS).until(() -> {
                     when().get(routedResource).then().assertThat().body(containsString(body2));
                     when().get(checkTarget).then().assertThat().body(containsString(body2));
         });
