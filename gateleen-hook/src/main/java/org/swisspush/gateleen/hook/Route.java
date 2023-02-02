@@ -1,5 +1,6 @@
 package org.swisspush.gateleen.hook;
 
+import io.vertx.codegen.annotations.Nullable;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
@@ -223,7 +224,7 @@ public class Route {
      * @param request - the original but already consumed request
      * @param requestBody - saved buffer with the data of body from the original request
      */
-    public void forward(HttpServerRequest request, final Buffer requestBody, final Handler<Void> afterHandler) {
+    public void forward(HttpServerRequest request, final Buffer requestBody, @Nullable final Handler<Void> afterHandler) {
 
         // checking if the forwarder is for all methods
         if (httpHook.getMethods().isEmpty()) {

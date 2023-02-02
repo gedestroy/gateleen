@@ -116,7 +116,7 @@ public class Forwarder extends AbstractForwarder {
      * @param bodyData - a buffer with the body data, null if the request
      *                 was not yet consumed
      */
-    public void handle(final HttpServerRequest req, final Buffer bodyData, final Handler<Void> afterHandler) {
+    public void handle(final HttpServerRequest req, final Buffer bodyData, @Nullable final Handler<Void> afterHandler) {
         final Logger log = RequestLoggerFactory.getLogger(Forwarder.class, req);
 
         if (handleHeadersFilter(req)) {
@@ -217,7 +217,7 @@ public class Forwarder extends AbstractForwarder {
         return evalScope.getErrorMessage();
     }
 
-    private void handleRequest(final HttpServerRequest req, final Buffer bodyData, final String targetUri, final Logger log, final Map<String, String> profileHeaderMap, final Handler<Void> afterHandler) {
+    private void handleRequest(final HttpServerRequest req, final Buffer bodyData, final String targetUri, final Logger log, final Map<String, String> profileHeaderMap, @Nullable final Handler<Void> afterHandler) {
         final LoggingHandler loggingHandler = new LoggingHandler(loggingResourceManager, req, vertx.eventBus());
 
         final String uniqueId = req.headers().get("x-rp-unique_id");
@@ -421,7 +421,7 @@ public class Forwarder extends AbstractForwarder {
         });
     }
 
-    private Handler<AsyncResult<HttpClientResponse>> getAsyncHttpClientResponseHandler(final HttpServerRequest req, final String targetUri, final Logger log, final Map<String, String> profileHeaderMap, final LoggingHandler loggingHandler, final long startTime, final Handler<Void> afterHandler) {
+    private Handler<AsyncResult<HttpClientResponse>> getAsyncHttpClientResponseHandler(final HttpServerRequest req, final String targetUri, final Logger log, final Map<String, String> profileHeaderMap, final LoggingHandler loggingHandler, final long startTime, @Nullable final Handler<Void> afterHandler) {
         return asyncResult -> {
             HttpClientResponse cRes = asyncResult.result();
             if (asyncResult.failed()) {
