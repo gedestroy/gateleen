@@ -15,10 +15,6 @@
             <artifactId>angularjs</artifactId>
         </dependency>
     </dependencies>
-
-    <properties>
-        <npmrcFile>.npmrc-public</npmrcFile>
-    </properties>
     <build>
         <plugins>
             <plugin>
