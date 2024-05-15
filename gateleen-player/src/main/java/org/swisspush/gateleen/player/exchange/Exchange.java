@@ -193,7 +193,7 @@ public class Exchange {
      * @param statusPredicate statusPredicate
      * @return Predicate
      */
-    public static Predicate<ResponseEntity<JSONObject>> status(final Predicate<HttpStatus> statusPredicate) {
+    public static Predicate<ResponseEntity<JSONObject>> status(final Predicate<HttpStatusCode> statusPredicate) {
         return response -> statusPredicate.apply(response.getStatusCode());
     }
 
