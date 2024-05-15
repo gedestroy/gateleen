@@ -75,7 +75,7 @@ public class Exchange {
             response = new ResponseEntity<>(
                     body,
                     createHeaders(headers),
-                    HttpStatus.valueOf(json.getInt("statusCode")));
+                    HttpStatusCode.valueOf(json.getInt("statusCode")));
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
