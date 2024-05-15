@@ -28,9 +28,9 @@ jobs:
           gpg-passphrase: CI_GPG_PASSPHRASE # env variable for GPG private key passphrase
 
       - name: Start Redis
-        uses: supercharge/redis-github-action@1.4.0
+        uses: supercharge/redis-github-action@1.7.0
         with:
-          redis-version: 4
+          redis-version: 7
 
       - name: Install chromedriver
         uses: nanasess/setup-chromedriver@v2
