@@ -503,7 +503,7 @@ public class Forwarder extends AbstractForwarder {
 
             final LoggingWriteStream loggingWriteStream = new LoggingWriteStream(req.response(), loggingHandler, false);
             final Pump pump = Pump.pump(cRes, loggingWriteStream);
-            cRes.endHandler(v -> {
+            Handler<Void> cResEndHandler = v -> {
                 try {
                     req.response().end();
 
@@ -516,7 +516,14 @@ public class Forwarder extends AbstractForwarder {
                     // ignore because maybe already closed
                 }
                 vertx.runOnContext(event -> loggingHandler.log());
-            });
+            };
+            try {
+                cRes.endHandler(cResEndHandler);
+            } catch (IllegalStateException ex) {
+                log.warn("cRes.endHandler() failed", ex);
+                respondError(req, StatusCode.INTERNAL_SERVER_ERROR);
+                return;
+            }
             pump.start();
 
             Runnable unpump = () -> {
@@ -535,7 +542,14 @@ public class Forwarder extends AbstractForwarder {
                 respondError(req, StatusCode.INTERNAL_SERVER_ERROR);
             });
 
-            req.connection().closeHandler((aVoid) -> unpump.run());
+            HttpConnection connection = req.connection();
+            if (connection != null) {
+                connection.closeHandler((Void v) -> unpump.run());
+            } else {
+                log.warn("TODO No way to call 'unpump.run()' in the right moment. As there seems"
+                        + " to be no event we could register a handler for. Gateleen wishes you"
+                        + " some happy timeouts ({})", req.uri());
+            }
         };
     }
 
