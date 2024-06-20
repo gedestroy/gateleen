@@ -41,6 +41,10 @@
             <groupId>uk.co.datumedge</groupId>
             <artifactId>hamcrest-json</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.ee10.websocket</groupId>
+            <artifactId>jetty-ee10-websocket-jakarta-client</artifactId>
+        </dependency>
 
         <!-- TEST dependencies -->
         <dependency>
