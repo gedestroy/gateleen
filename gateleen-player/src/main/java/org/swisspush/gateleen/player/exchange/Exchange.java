@@ -75,7 +75,7 @@ public class Exchange {
             response = new ResponseEntity<>(
                     body,
                     createHeaders(headers),
-                    HttpStatus.valueOf(json.getInt("statusCode")));
+                    HttpStatusCode.valueOf(json.getInt("statusCode")));
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -193,7 +193,7 @@ public class Exchange {
      * @param statusPredicate statusPredicate
      * @return Predicate
      */
-    public static Predicate<ResponseEntity<JSONObject>> status(final Predicate<HttpStatus> statusPredicate) {
+    public static Predicate<ResponseEntity<JSONObject>> status(final Predicate<HttpStatusCode> statusPredicate) {
         return response -> statusPredicate.apply(response.getStatusCode());
     }
 
